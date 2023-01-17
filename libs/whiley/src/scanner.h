@@ -15,8 +15,8 @@ namespace FMTeach {
     public:
       
     Scanner(std::istream *in) : yyFlexLexer(in) {
-	loc = new FMTeach::Whiley::Parser::location_type();
-      };
+      //loc = new FMTeach::Whiley::Parser::location_type();
+    };
       
       //get rid of override virtual function warning
       using FlexLexer::yylex;

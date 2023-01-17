@@ -1,4 +1,8 @@
 
+
+#ifndef _IR_INSTRUCTIONS__
+#define _IR_INSTRUCTIONS__
+
 #include "ir/expr.hpp"
 #include <ostream>
 #include <memory>
@@ -38,6 +42,7 @@ namespace FMTeach {
     };
     
     class Assume : public Instruction {
+    public:
       Assume (Expr_ptr expr);
       auto& getExpression () const {return *expr;}
       std::ostream& output(std::ostream&) const override;
@@ -83,3 +88,6 @@ namespace FMTeach {
     
   }
 }
+
+
+#endif

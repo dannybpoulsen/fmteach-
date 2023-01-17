@@ -6,14 +6,23 @@ namespace FMTeach {
 
     template<class T>
     constexpr auto findInstrIndex () {
-      return auto_index<0,T,Assign,Skip,Load,Store> (); 
+      return auto_index<0,T,Assign,Skip,Load,Store,Assume> (); 
     }
     
     
     Assign::Assign (Register_ptr dest, Expr_ptr expr) : Instruction (findInstrIndex<Assign> ()),
 							assignee(dest),
 							expr(expr) {}
+    
 
+    Assume::Assume (Expr_ptr expr) : Instruction (findInstrIndex<Assume> ()),
+				     expr(expr) {}
+    
+
+    std::ostream& Assume::output (std::ostream& os) const  {
+      return os << "Assume (" <<* expr <<") ";
+    }
+    
     std::ostream& Assign::output (std::ostream& os) const  {
       return os << *assignee <<" <- " << *expr;
     }

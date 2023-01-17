@@ -9,6 +9,7 @@
 #include <stdexcept>
 #include <iostream>
 #include <algorithm>
+#include <cstdint>
 
 namespace FMTeach {
   namespace Whiley {
@@ -37,11 +38,42 @@ namespace FMTeach {
       virtual void visitSequenceStatement (const SequenceStatement& ) = 0;
       
     };
- 
+
+    struct fileloc_t {
+      std::size_t line{1};
+      std::size_t col{1};
+      
+    };
+
+    inline std::ostream& operator<< (std::ostream& os, const fileloc_t& loc) {
+      return os << loc.line <<":"<<loc.col;
+    }
+    
+    struct location_t {
+      fileloc_t begin;
+      fileloc_t end;
+
+      void step () {begin = end; end = fileloc_t{};}
+      void movecol (std::size_t s) {end.col+=s;}
+      void newline () {
+	end.line++;
+	end.col = 1;
+	begin = end;
+      }
+    };
+
+    inline std::ostream& operator<< (std::ostream& os, const location_t& loc) {
+      return os << loc.begin << " - " << loc.end;
+    }
+    
+    
     class Node {
     public:
+      Node (const location_t& loc = location_t{}) : location (loc) {}
       virtual ~Node () {}
       virtual void accept (NodeVisitor&) const = 0;
+    private:
+      location_t location;
     };
 
     std::ostream& operator<< (std::ostream&, const Node& );
@@ -50,6 +82,7 @@ namespace FMTeach {
     
     class Expression : public Node {
     public:
+      Expression (const location_t& loc) : Node(loc) {}
       virtual ~Expression () {}
       virtual bool isConstant () const = 0;
       
@@ -60,7 +93,7 @@ namespace FMTeach {
     
     class Identifier : public Expression {
     public:
-      Identifier (std::string name) : name(std::move(name)) {}
+      Identifier (std::string name, const location_t& loc = location_t{}) : Expression(loc), name(std::move(name)) {}
       auto getName () const {return name;}
       void accept (NodeVisitor& v) const {v.visitIdentifier (*this);} 
       bool isConstant () const override {return false;}
@@ -71,7 +104,7 @@ namespace FMTeach {
 
     class NumberExpression : public Expression {
     public:
-      NumberExpression (std::int8_t value) : value(value) {}
+      NumberExpression (std::int8_t value, const location_t& loc) : Expression(loc),value(value) {}
       auto getValue () const {return value;}
       void accept (NodeVisitor& v) const {v.visitNumberExpression (*this);}
       bool isConstant () const override {return true;}
@@ -95,9 +128,10 @@ namespace FMTeach {
 
     class BinaryExpression : public Expression {
     public:
-      BinaryExpression (Expression_ptr&& l, Expression_ptr&& r, BinOps op) : left(std::move(l)),
-									     right(std::move(r)),
-									     type(op) {}
+      BinaryExpression (Expression_ptr&& l, Expression_ptr&& r, BinOps op, const location_t& loc) : Expression(loc),
+												    left(std::move(l)),
+												    right(std::move(r)),
+												    type(op) {}
       auto getOp () const {return type;}
       auto& getLeft () const {return *left;}
       auto& getRight () const {return *right;}
@@ -112,6 +146,7 @@ namespace FMTeach {
 
     class Statement : public Node {
     public:
+      Statement (const location_t& loc) : Node(loc) {}
       virtual ~Statement () {}
     };
 
@@ -119,13 +154,15 @@ namespace FMTeach {
 
     class SkipStatement  : public Statement{
     public:
+      SkipStatement (const location_t& loc) : Statement(loc) {}
       void accept (NodeVisitor& v) const {v.visitSkipStatement (*this);}
     };
     
     class AssignStatement  : public Statement{
     public:
-      AssignStatement (std::string assignName, Expression_ptr&& expr) : assignName(std::move(assignName)),
-									expr(std::move(expr)) {}
+      AssignStatement (std::string assignName, Expression_ptr&& expr, const location_t& loc) : Statement(loc),
+											       assignName(std::move(assignName)),
+											       expr(std::move(expr)) {}
       
       void accept (NodeVisitor& v) const override {v.visitAssignStatement(*this);}
       auto& getAssignName () const {return assignName;}
@@ -139,9 +176,10 @@ namespace FMTeach {
     
     class IfStatement  : public Statement{
     public:
-      IfStatement (Expression_ptr&& cond,Statement_ptr ifb, Statement_ptr elseb) : cond(std::move(cond)) ,
-										   if_body(std::move(ifb)),
-										   else_body(std::move(elseb)) {}
+      IfStatement (Expression_ptr&& cond,Statement_ptr ifb, Statement_ptr elseb, const location_t& loc) : Statement(loc),
+													  cond(std::move(cond)) ,
+													  if_body(std::move(ifb)),
+													  else_body(std::move(elseb)) {}
       
       void accept (NodeVisitor& v) const override {v.visitIfStatement(*this);}
       auto& getCondition () const {return *cond;}
@@ -157,8 +195,9 @@ namespace FMTeach {
 
     class WhileStatement  : public Statement{
     public:
-      WhileStatement (Expression_ptr&& cond,Statement_ptr body) : cond(std::move(cond)) ,
-										   body(std::move(body)) {}
+      WhileStatement (Expression_ptr&& cond,Statement_ptr body, const location_t& loc) : Statement(loc),
+											 cond(std::move(cond)) ,
+											 body(std::move(body)) {}
       
       void accept (NodeVisitor& v) const override {
 	v.visitWhileStatement (*this);
@@ -175,8 +214,9 @@ namespace FMTeach {
 
     class SequenceStatement  : public Statement{
     public:
-      SequenceStatement (Statement_ptr first,Statement_ptr second) : first(std::move(first)) ,
-								     second(std::move(second)) {}
+      SequenceStatement (Statement_ptr first,Statement_ptr second, const location_t& loc) : Statement(loc),
+											    first(std::move(first)) ,
+											    second(std::move(second)) {}
       
       void accept (NodeVisitor& v) const {
 	v.visitSequenceStatement (*this);
@@ -236,28 +276,26 @@ namespace FMTeach {
     public:
       
       
-      void NumberExpr (std::int8_t val) {
-	std::cerr << "Number" << static_cast<int> (val) << std::endl; 
-	exprStack.insert (std::make_unique<NumberExpression> (val));
+      void NumberExpr (std::int8_t val, const location_t& l) {
+	exprStack.insert (std::make_unique<NumberExpression> (val,l));
       }
 
-      void IdentifierExpr (const std::string name) {
-	exprStack.insert (std::make_unique<Identifier> (name));
+      void IdentifierExpr (const std::string name, const location_t& l) {
+	exprStack.insert (std::make_unique<Identifier> (name,l));
       }
       
-      void BinaryExpr (BinOps op) {
+      void BinaryExpr (BinOps op, const location_t& l) {
 	auto right = exprStack.pop ();
 	auto left = exprStack.pop ();  
-	exprStack.insert (std::make_unique<BinaryExpression> (std::move(left),std::move(right),op));
+	exprStack.insert (std::make_unique<BinaryExpression> (std::move(left),std::move(right),op,l));
       }
 
-      void AssignStmt (std::string name) {
-	std::cerr << "Assign" << std::endl;
+      void AssignStmt (std::string name, const location_t& l) {
 	if (vars.count (name)) {
 	 
 	  auto expr = exprStack.pop ();
 	  
-	  stmtStack.insert (std::make_unique<AssignStatement> (name,std::move(expr)));
+	  stmtStack.insert (std::make_unique<AssignStatement> (name,std::move(expr),l));
 	}
 	else {
 	  throw std::runtime_error ("Variable does not exist");
@@ -265,8 +303,7 @@ namespace FMTeach {
 	}
       }
       
-      void DeclareStmt (std::string name) {
-	std::cerr << "Declare" << name  << std::endl; 
+      void DeclareStmt (std::string name, const location_t& l) {
 	if (!vars.count (name)) {
 	  vars.insert (name);
 	}
@@ -275,38 +312,43 @@ namespace FMTeach {
       }
       
       
-      void IfStmt () {
+      void IfStmt (const location_t& l)  {
 	auto expr = exprStack.pop ();
 	auto elseb = stmtStack.pop ();
 	auto ifb = stmtStack.pop ();
 	
 	stmtStack.insert (std::make_unique<IfStatement> (std::move(expr),
 							 std::move(ifb),
-							 std::move(elseb))
+							 std::move(elseb),
+							 l)
 			  );
       }
 
-       void SkipStmt () {
+       void SkipStmt (const location_t& l) {
 	
-	 stmtStack.insert (std::make_unique<SkipStatement> ( ));
+	 stmtStack.insert (std::make_unique<SkipStatement> (l));
       }
       
-      void WhileStmt () {
+      void WhileStmt (const location_t& l) {
 	auto expr = exprStack.pop ();
 	auto body = stmtStack.pop ();
 	
 	stmtStack.insert (std::make_unique<WhileStatement> (std::move(expr),
-							    std::move(body))
+							    std::move(body),
+							    l
+							    )
+			  
 			  );
 	
         }
 
-      void SequenceStmt () {
+      void SequenceStmt ( const location_t& l) {
 	auto second = stmtStack.pop ();
 	auto first = stmtStack.pop ();
 	
 	stmtStack.insert (std::make_unique<SequenceStatement> (std::move(first),
-							    std::move(second))
+							       std::move(second),
+							       l)
 			  );
 	
         }

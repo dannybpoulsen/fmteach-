@@ -12,8 +12,7 @@ using token = FMTeach::Whiley::Parser::token;
 /* define yyterminate as this instead of NULL */
 #define yyterminate() return( token::END )
 
-/* update location on matching */
-#define YY_USER_ACTION loc->step(); loc->columns(yyleng);
+#define YY_USER_ACTION  loc->movecol(strlen(yytext));
 
 %}
 
@@ -21,11 +20,14 @@ using token = FMTeach::Whiley::Parser::token;
 %option nodefault
 %option yyclass="FMTeach::Whiley::Scanner"
 %option noyywrap
+%option yylineno
 %option c++
 
 %%
-%{          /** Code executed at the beginning of yylex **/
-            yylval = lval;
+%{
+yylval = lval;
+loc = location;
+loc->begin = loc->end;
 %}
 "var"      {return token::VAR;}
 "while"      {return token::WHILE;}
@@ -55,7 +57,8 @@ using token = FMTeach::Whiley::Parser::token;
 [1-9][0-9]*  {yylval->emplace<std::int8_t> (std::stoi(yytext)); return token::NUMBER; }
 -[1-9][0-9]*  {yylval->emplace<std::int8_t> (std::stoi(yytext)); return token::NUMBER; }
 
-[\n\t ' '] {};
-
+[\n] {loc->newline (); }
+[\t ' '] {loc->movecol(strlen(yytext));}
+			    
 .           {std::cerr << "Unexpected text" << yytext << std::endl;}
 %%
