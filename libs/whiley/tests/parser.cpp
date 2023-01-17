@@ -3,7 +3,7 @@
 
 int main () {
   FMTeach::Whiley::WParser parser;
-  parser.parse (std::cin);
-  
+  auto prgm = parser.parse (std::cin);
+  std::cerr << prgm << std::endl;
 }
 

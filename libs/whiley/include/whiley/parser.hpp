@@ -1,12 +1,13 @@
-#include <memory>
+#include "whiley/ast.hpp"
+
 
 namespace FMTeach {
   namespace Whiley {
     class WParser {
     public:
    
-      void parse( const char *filename );
-      void parse( std::istream &iss );
+      Program parse( const std::string& filename );
+      Program parse( std::istream& iss );
     };
   }
 }

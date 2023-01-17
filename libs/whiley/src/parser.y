@@ -9,6 +9,7 @@
   namespace FMTeach {
     namespace Whiley {
       class Scanner;
+      class ASTBuilder;
     }
   }
 
@@ -23,9 +24,10 @@
 
 #include <cstdint>
 #include <string>
+ 
  }
 
-%parse-param { FMTeach::Whiley::Scanner  &scanner  }
+%parse-param { FMTeach::Whiley::Scanner& scanner } {FMTeach::Whiley::ASTBuilder& builder }
 
 %code{
    #include <iostream>
@@ -62,26 +64,26 @@
 %token    LBRACE
 %token    RBRACE
 
+%token END 0 "end of file"
 %token <std::string>    IDENTIFIER
 %token <std::int8_t>    NUMBER
-%token    END    0     "end of file"
-%token    LOWER
 
 
 %locations
 
 %%
 
-prgm : decllist stmtlist {}
+prgm : decllist stmtlist  {}
 decllist :  decllist decl | decl
-decl : VAR IDENTIFIER SEMI {}
+decl : VAR IDENTIFIER SEMI {builder.DeclareStmt ($2);}
 
-stmtlist : stmtlist stmt | stmt
+stmtlist : stmtlist stmt {builder.SequenceStmt ();} | stmt
 stmt : simpstmt  | selectivestmt | iterativestmt
-selectivestmt : IF LPARAN expr RPARAN LBRACE stmtlist RBRACE
-iterativestmt : WHILE LPARAN expr RPARAN LBRACE stmtlist RBRACE
-simpstmt : IDENTIFIER ASS expr SEMI{}
-expr : NUMBER {}
+selectivestmt : IF LPARAN expr RPARAN LBRACE stmtlist RBRACE ELSE LBRACE stmtlist RBRACE {builder.IfStmt ();}
+iterativestmt : WHILE LPARAN expr RPARAN LBRACE stmtlist RBRACE {builder.WhileStmt ();}
+simpstmt : IDENTIFIER ASS expr SEMI { builder.AssignStmt ($1);}
+| SKIP SEMI {builder.SkipStmt ();}
+expr : NUMBER {builder.NumberExpr ($1);} | IDENTIFIER {builder.IdentifierExpr ($1);}
 %%
 
 

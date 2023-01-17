@@ -127,7 +127,7 @@ namespace FMTeach {
 	}
 
 	else if constexpr (b == BinOp::Lt) {
-r	   os << " < ";
+	   os << " < ";
 	}
 
 	else if constexpr (b == BinOp::Gt) {

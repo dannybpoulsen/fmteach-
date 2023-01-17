@@ -1,18 +1,39 @@
 #include "whiley/parser.hpp"
 #include "scanner.h"
 #include "parser.hh"
+#include "whiley/ast.hpp"
 
 #include <iostream>
+#include <fstream>
+#include <stdexcept>
 
 namespace FMTeach {
   namespace Whiley {
-    void WParser::parse( std::istream &iss ) {
+    Program  WParser::parse( std::istream& iss ) {
+      ASTBuilder builder;
       Scanner scanner {&iss};
-      Parser parser{scanner};
+      
+      Parser parser{scanner,builder};
 
+      
       if (!parser.parse ()) {
-	std::cerr << "Parse Failed" << std::endl;
+	  return builder.get ();
       }
+
+      else {
+	throw std::runtime_error ("Parse Failed");
+      
+      }
+      
     }
+
+    Program WParser::parse(const std::string& s ) {
+      std::ifstream ifs;
+
+      ifs.open (s, std::ifstream::in);
+      return parse (ifs);
+    }
+    
+    
   }
 }

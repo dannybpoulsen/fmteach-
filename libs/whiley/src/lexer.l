@@ -42,7 +42,7 @@ using token = FMTeach::Whiley::Parser::token;
 ">"  {return token::GT;}
 "=="  {return token::EQ;}
 "!="  {return token::NEQ;}
-":="  {return token::ASS;}
+"="  {return token::ASS;}
 ";"  {return token::SEMI;}
 "("  {return token::LPARAN;}
 ")"  {return token::RPARAN;}
@@ -50,7 +50,7 @@ using token = FMTeach::Whiley::Parser::token;
 "}"  {return token::RBRACE;}
 
 
-
+<<EOF>> {return token::END;}
 [a-z]+       {yylval->emplace<std::string> (yytext); return token::IDENTIFIER; }
 [1-9][0-9]*  {yylval->emplace<std::int8_t> (std::stoi(yytext)); return token::NUMBER; }
 -[1-9][0-9]*  {yylval->emplace<std::int8_t> (std::stoi(yytext)); return token::NUMBER; }
