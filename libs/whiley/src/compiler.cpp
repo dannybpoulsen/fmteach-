@@ -121,6 +121,7 @@ namespace FMTeach {
       
     }
     void Compiler::visitWhileStatement (const WhileStatement& whiles) {
+      whiles.getCondition ().accept(*this);
       auto posExpr = _internal->expr;
       auto negExpr = std::make_shared<FMTeach::IR::NegationExpr> (_internal->expr);
       auto my_start = _internal->start;

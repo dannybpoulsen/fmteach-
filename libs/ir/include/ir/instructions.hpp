@@ -15,6 +15,7 @@ namespace FMTeach {
     
     
     class Instruction {
+    public:
       virtual std::ostream& output(std::ostream&) const = 0;
       auto instType () const {return type;}
 
@@ -27,6 +28,10 @@ namespace FMTeach {
       
     };
 
+    inline std::ostream& operator<< (std::ostream& os, const Instruction& inst) {
+      return inst.output (os);
+    }
+    
     using Instruction_ptr = std::shared_ptr<Instruction>;
     
     class Assign : public Instruction {

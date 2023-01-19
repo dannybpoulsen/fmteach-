@@ -17,9 +17,9 @@ int main (int argc, char** argv) {
   po::options_description options("FMTeach");
   std::unordered_map<std::string,FMTeach::Exercise*> exercises;
   std::stringstream str;
-
+  
+  str << "Select exercise:\n"; 
   for (auto& e : FMTeach::exercies ()) {
-    str << "Select exercise:\n"; 
     str << "\t" << e->name<< "\n";  
     exercises.emplace (e->name,e);
   }
@@ -54,21 +54,20 @@ int main (int argc, char** argv) {
     return -1;
   }
   
-  std::cerr << "Input file:" << inputfile << std::endl;
   if (inputfile.size ()) {
     auto exer = exercises.at (selexer);
     FMTeach::Whiley::WParser parser;
     auto prgm = parser.parse (inputfile);
     auto cfa = FMTeach::Whiley::Compiler{}.Compile ( prgm);
 
-    std::int64_t result;
+    FMTeach::Result_ptr result;
     try {
       if (runSolution) 
 	result = exer->teacher_solution (cfa);
       else
 	result = exer->student_solution (cfa);
-
-      std::cout << "Answer:" << result << std::endl;
+      
+      result->writeResult (std::cout);
       
     }catch (FMTeach::NotSolvedYet& e) {
       std::cerr << e.what () << std::endl;

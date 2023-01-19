@@ -17,7 +17,7 @@ namespace FMTeach {
   }
 
   
-  Exercise::Exercise (const std::string& name, solv_func teacher, solv_func student) : teacher_solution(teacher),student_solution (student),name(name) {
+  Exercise::Exercise (const std::string& name) : name(name) {
     registerExercise (this);
   }
   

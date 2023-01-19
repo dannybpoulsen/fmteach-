@@ -24,7 +24,7 @@ namespace FMTeach {
     }
     
     std::ostream& Assign::output (std::ostream& os) const  {
-      return os << *assignee <<" <- " << *expr;
+      return os << *assignee <<" := " << *expr;
     }
       
     

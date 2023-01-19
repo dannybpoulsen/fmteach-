@@ -80,6 +80,7 @@ stmtlist : stmtlist stmt {builder.SequenceStmt (@$);} | stmt
 stmt : simpstmt  | selectivestmt | iterativestmt
 
 selectivestmt : IF LPARAN expr RPARAN LBRACE stmtlist RBRACE ELSE LBRACE stmtlist RBRACE {builder.IfStmt (@$);}
+              | IF LPARAN expr RPARAN LBRACE stmtlist RBRACE {builder.SkipStmt (@$);builder.IfStmt (@$);}
 
 iterativestmt : WHILE LPARAN expr RPARAN LBRACE stmtlist RBRACE {builder.WhileStmt (@$);}
 

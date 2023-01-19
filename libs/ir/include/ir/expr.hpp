@@ -217,7 +217,8 @@ namespace FMTeach {
     Binary<op>::Binary (Expr_ptr&& l, Expr_ptr&& r) : Expr(findExprIndex<Binary<op>> ()), left(std::move(l)),right(std::move(r)) {}
 
     template<UnaryOp op>
-    Unary<op>::Unary (Expr_ptr expr) : Expr(findExprIndex<Unary<op>> ()), right(std::move(expr)) {}
+    Unary<op>::Unary (Expr_ptr expr) : Expr(findExprIndex<Unary<op>> ()), right(expr) {
+    }
     
     inline Constant::Constant (std::int8_t val) : Expr(findExprIndex<Constant> ()), value(val) {}
     inline Register::Register (std::size_t number, std::string name) : Expr(findExprIndex<Register> ()), registernumber(number),name(std::move(name)) {}
