@@ -9,14 +9,16 @@ namespace FMTeach {
     class Compiler : private NodeVisitor {
     public:
       FMTeach::IR::CFA Compile (const FMTeach::Whiley::Program&);
-      void visitIdentifier (const Identifier&);
-      void visitNumberExpression (const NumberExpression& ); 
-      void visitBinaryExpression (const BinaryExpression& ); 
-      void visitAssignStatement (const AssignStatement& ); 
-      void visitIfStatement (const IfStatement& ); 
-      void visitSkipStatement (const SkipStatement& ); 
-      void visitWhileStatement (const WhileStatement& ); 
-      void visitSequenceStatement (const SequenceStatement& ); 
+      void visitIdentifier (const Identifier&) override ;
+      void visitNumberExpression (const NumberExpression& ) override ; 
+      void visitDerefExpression (const DerefExpression& ) override ;
+      void visitBinaryExpression (const BinaryExpression& ) override ;  
+      void visitAssignStatement (const AssignStatement& ) override ; 
+      void visitIfStatement (const IfStatement& ) override ; 
+      void visitSkipStatement (const SkipStatement& ) override ; 
+      void visitWhileStatement (const WhileStatement& ) override ; 
+      void visitSequenceStatement (const SequenceStatement& ) override ; 
+      void visitMemAssignStatement (const MemAssignStatement&) override;
       
     private:
       struct Internal;

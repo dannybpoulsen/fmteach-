@@ -50,6 +50,8 @@
 %token    MINUS
 %token    DIV
 %token    MUL
+%token    DEREF
+%token    DEREFEXPR
 %token    LEQ
 %token    GEQ
 %token    LT
@@ -86,6 +88,7 @@ iterativestmt : WHILE LPARAN expr RPARAN LBRACE stmtlist RBRACE {builder.WhileSt
 
 simpstmt : IDENTIFIER ASS expr SEMI { builder.AssignStmt ($1,@$);}
 | SKIP SEMI {builder.SkipStmt (@$);}
+| DEREF expr ASS expr SEMI {builder.MemAssignStmt (@$);}
 
 expr : arith_expr | bool_expr
 
@@ -104,7 +107,8 @@ arith_term   : arith_term MUL arith_factor {builder.BinaryExpr (FMTeach::Whiley:
              | arith_factor
 arith_factor : NUMBER {builder.NumberExpr ($1,@$);}
              | IDENTIFIER {builder.IdentifierExpr ($1,@$);}
-             | LPARAN expr RPARAN  
+             | LPARAN expr RPARAN
+	     | DEREFEXPR expr  DEREFEXPR{builder.DerefExpr (@$); }
 
 %%
 

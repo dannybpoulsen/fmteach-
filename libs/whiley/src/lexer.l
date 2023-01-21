@@ -38,6 +38,8 @@ loc->begin = loc->end;
 "-"  {return token::MINUS;}
 "/"  {return token::DIV;}
 "*"  {return token::MUL;}
+"#"  {return token::DEREF;}
+"$"  {return token::DEREFEXPR;}
 "<="  {return token::LEQ;}
 ">="  {return token::GEQ;}
 "<"  {return token::LT;}

@@ -80,13 +80,13 @@ namespace FMTeach {
     
     class Store : public Instruction {
     public:
-      Store (Register_ptr toStore, Expr_ptr address);
+      Store (Expr_ptr toStore, Expr_ptr address);
       auto& getStoree () const {return *storee;}
       auto& getAddress () const {return *address;}
       std::ostream& output(std::ostream&) const override;
       
     private:
-      Register_ptr storee;
+      Expr_ptr storee;
       Expr_ptr address;
     
     };

@@ -41,10 +41,10 @@ namespace FMTeach {
       return os << *assignee <<" <- *" << *address;
     }
     
-    Store::Store (Register_ptr toStore, Expr_ptr address) : Instruction(findInstrIndex<Store> ()),
-							    storee(toStore),
-							    address (address) {}
-
+    Store::Store (Expr_ptr toStore, Expr_ptr address) : Instruction(findInstrIndex<Store> ()),
+							storee(toStore),
+							address (address) {}
+    
     std::ostream& Store::output (std::ostream& os) const  {
       return os << "*" << *address <<" <- " << *storee;
     }

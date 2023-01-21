@@ -16,7 +16,9 @@ namespace FMTeach {
     class Identifier;
     class NumberExpression;
     class BinaryExpression;
+    class DerefExpression;
     class AssignStatement;
+    class MemAssignStatement;
     class DeclareStatement;
     class IfStatement;
     class WhileStatement;
@@ -30,7 +32,11 @@ namespace FMTeach {
       virtual void visitIdentifier (const Identifier&) = 0;
       virtual void visitNumberExpression (const NumberExpression& ) = 0;
       virtual void visitBinaryExpression (const BinaryExpression& ) = 0;
+      virtual void visitDerefExpression (const DerefExpression& ) = 0;
+      
       virtual void visitAssignStatement (const AssignStatement& ) = 0;
+      virtual void visitMemAssignStatement (const MemAssignStatement& ) = 0;
+      
       virtual void visitIfStatement (const IfStatement& ) = 0;
       virtual void visitSkipStatement (const SkipStatement& ) = 0;
       
@@ -144,6 +150,19 @@ namespace FMTeach {
       BinOps type;
     };
 
+    class DerefExpression : public Expression {
+    public:
+      DerefExpression (Expression_ptr&& l, const location_t& loc) : Expression(loc),
+								    left(std::move(l)) {}
+								   
+      auto& getMem () const {return *left;}
+      bool isConstant () const override {return false;}
+      void accept (NodeVisitor& v) const {v.visitDerefExpression (*this);}
+      
+    private:
+      Expression_ptr left;
+    };
+
     class Statement : public Node {
     public:
       Statement (const location_t& loc) : Node(loc) {}
@@ -173,6 +192,20 @@ namespace FMTeach {
       std::string assignName;
     };
 
+    class MemAssignStatement  : public Statement{
+    public:
+      MemAssignStatement (Expression_ptr&& mem, Expression_ptr&& expr, const location_t& loc) : Statement(loc),
+												memLoc(std::move(mem)),
+												expr(std::move(expr)) {}
+      
+      void accept (NodeVisitor& v) const override {v.visitMemAssignStatement(*this);}
+      auto& getMemLoc () const {return *memLoc;}
+      auto& getExpression () const {return *expr;}
+      
+      private:
+      Expression_ptr expr;
+      Expression_ptr memLoc;
+    };
     
     class IfStatement  : public Statement{
     public:
@@ -283,6 +316,12 @@ namespace FMTeach {
       void IdentifierExpr (const std::string name, const location_t& l) {
 	exprStack.insert (std::make_unique<Identifier> (name,l));
       }
+
+      void DerefExpr ( const location_t& l) {
+	auto left = exprStack.pop ();  
+	exprStack.insert (std::make_unique<DerefExpression> (std::move(left),l));
+      }
+
       
       void BinaryExpr (BinOps op, const location_t& l) {
 	auto right = exprStack.pop ();
@@ -328,6 +367,17 @@ namespace FMTeach {
 	
 	 stmtStack.insert (std::make_unique<SkipStatement> (l));
       }
+
+      void MemAssignStmt (const location_t& l) {
+	auto assign_val = exprStack.pop ();
+	auto mem = exprStack.pop ();
+	
+	stmtStack.insert (std::make_unique<MemAssignStatement> (std::move(mem),
+								std::move(assign_val),
+								l)
+			  );
+      }
+      
       
       void WhileStmt (const location_t& l) {
 	auto expr = exprStack.pop ();
