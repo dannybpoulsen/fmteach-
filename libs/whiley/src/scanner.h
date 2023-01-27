@@ -6,7 +6,6 @@
 #endif
 
 #include "parser.hh"
-#include "location.hh"
 
 namespace FMTeach {
   namespace Whiley {
