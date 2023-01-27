@@ -13,6 +13,14 @@ namespace FMTeach {
 	os << static_cast<int> (number.getValue ());
 		
       }
+
+      void visitDerefExpression (const DerefExpression& expr) override {
+	os << "*";
+	expr.getMem ().accept (*this);
+	
+		
+      }
+      
       
       void visitBinaryExpression (const BinaryExpression& binary) override {
 	os << "(";
@@ -56,6 +64,15 @@ namespace FMTeach {
 	ass.getExpression ().accept (*this);
 	os << ";\n";
       }
+
+      virtual void visitMemAssignStatement (const MemAssignStatement& assign) {
+	os << "*";
+	assign.getMemLoc ().accept (*this);
+	os << " = ";
+	assign.getExpression ().accept (*this);
+      }
+      
+      
       void visitIfStatement (const IfStatement& ifs) override {
 	os << "if (";
 	ifs.getCondition ().accept(*this);
@@ -81,7 +98,7 @@ namespace FMTeach {
 	seg.getSecond ().accept(*this);
 	
       }
-
+      
       auto& operator() (const Node& n) {
 	n.accept (*this);
 	return os;

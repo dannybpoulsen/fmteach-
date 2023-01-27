@@ -159,7 +159,8 @@ namespace FMTeach {
     
     enum class UnaryOp {
       Negation,
-      UnMinus
+      UnMinus,
+      Deref
     };
     
     template<UnaryOp b>
@@ -172,7 +173,10 @@ namespace FMTeach {
 	  os << " ! ";
 	}
 	else if constexpr (b == UnaryOp::UnMinus) {
-	   os << " - ";
+	  os << " - ";
+	}
+	else if constexpr (b == UnaryOp::Deref) {
+	  os << " * ";
 	}
 	os << " ( ";
 	right -> output (os);
@@ -185,7 +189,7 @@ namespace FMTeach {
 
     using NegationExpr = Unary<UnaryOp::Negation>;
     using MinusExpr = Unary<UnaryOp::UnMinus>;
-    
+    using DerefExpr = Unary<UnaryOp::Deref>;
     
     template<std::size_t i , class T, class F, class... Args>
       constexpr auto  auto_index ()  {
@@ -209,7 +213,7 @@ namespace FMTeach {
 
     template<class T>
     constexpr auto findExprIndex () {
-      return auto_index<0,T,Constant,Register,AddExpr,SubExpr,DivExpr,MulExpr,LEqExpr,GEqExpr,EqExpr,NEqExpr,LtExpr,GtExpr,NegationExpr,MinusExpr> (); 
+      return auto_index<0,T,Constant,Register,AddExpr,SubExpr,DivExpr,MulExpr,LEqExpr,GEqExpr,EqExpr,NEqExpr,LtExpr,GtExpr,NegationExpr,MinusExpr,DerefExpr> (); 
     }
     
     
@@ -241,6 +245,7 @@ namespace FMTeach {
       virtual T visitGtExpr (const GtExpr& r) = 0;
       virtual T visitNegationExpr (const NegationExpr& r) = 0;
       virtual T visitMinusExpr (const MinusExpr& r) = 0;
+      virtual T visitDerefExpr (const DerefExpr& r) = 0;
       
       
       T visit (Expr& e) {
@@ -273,7 +278,9 @@ namespace FMTeach {
 	  return visitGtExpr (static_cast<NegationExpr&> (e));
 	case findExprIndex<MinusExpr> ():
 	  return visitGtExpr (static_cast<MinusExpr&> (e));
-	
+	case findExprIndex<DerefExpr> ():
+	  return visitGtExpr (static_cast<DerefExpr&> (e));
+	    
 	default:
 	  throw std::runtime_error ("Don't know how to visit this");
 	}

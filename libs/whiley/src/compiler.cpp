@@ -34,6 +34,12 @@ namespace FMTeach {
     void Compiler::visitNumberExpression (const NumberExpression& num) {
       _internal->expr = std::make_shared<FMTeach::IR::Constant> (num.getValue ());
     }
+
+    void Compiler::visitDerefExpression (const DerefExpression& num) {
+      num.getMem ().accept (*this);
+      _internal->expr = std::make_shared<FMTeach::IR::DerefExpr> (_internal->expr);
+    }
+    
     
     void Compiler::visitBinaryExpression (const BinaryExpression& be) {
       be.getLeft ().accept (*this);
@@ -120,6 +126,7 @@ namespace FMTeach {
       _internal->end = end;
       
     }
+
     void Compiler::visitWhileStatement (const WhileStatement& whiles) {
       whiles.getCondition ().accept(*this);
       auto posExpr = _internal->expr;
@@ -136,6 +143,20 @@ namespace FMTeach {
       
       _internal->end = my_end;
     }
+
+    
+    void Compiler::visitMemAssignStatement (const MemAssignStatement& assign) {
+        assign.getMemLoc ().accept (*this);
+	auto mem = _internal->expr;
+	assign.getExpression ().accept (*this);
+	auto assigne = _internal->expr;
+	auto my_end = _internal->cfa.makeLocation ("",false);
+	
+	_internal->start->addEdge (std::make_shared<FMTeach::IR::Store> (assigne,mem),my_end);
+	_internal->end = my_end;
+	
+      }
+      
     
     void Compiler::visitSequenceStatement (const SequenceStatement&  s) {
       s.getFirst().accept (*this);
