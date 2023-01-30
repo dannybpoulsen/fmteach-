@@ -56,7 +56,7 @@ loc->begin = loc->end;
 
 <<EOF>> {return token::END;}
 [a-z]+       {yylval->emplace<std::string> (yytext); return token::IDENTIFIER; }
-[1-9][0-9]*  {yylval->emplace<std::int8_t> (std::stoi(yytext)); return token::NUMBER; }
+[0-9]+  {yylval->emplace<std::int8_t> (std::stoi(yytext)); return token::NUMBER; }
 -[1-9][0-9]*  {yylval->emplace<std::int8_t> (std::stoi(yytext)); return token::NUMBER; }
 
 [\n] {loc->newline (); }

@@ -10,9 +10,8 @@
 
 namespace FMTeach {
   namespace IR {
-
-    using instrtype_t = std::size_t;
     
+    using instrtype_t = std::size_t;
     
     class Instruction {
     public:
@@ -37,6 +36,7 @@ namespace FMTeach {
     class Assign : public Instruction {
     public:
       Assign (Register_ptr dest, Expr_ptr expr);
+      static consteval instrtype_t opcode () ;
       auto& getDestination () const {return *assignee;}
       auto& getExpression () const {return *expr;}
       std::ostream& output(std::ostream&) const override;
@@ -49,6 +49,7 @@ namespace FMTeach {
     class Assume : public Instruction {
     public:
       Assume (Expr_ptr expr);
+      static consteval instrtype_t opcode () ;
       auto& getExpression () const {return *expr;}
       std::ostream& output(std::ostream&) const override;
       
@@ -61,6 +62,7 @@ namespace FMTeach {
     class Skip : public Instruction {
     public:
       Skip ();
+      static consteval instrtype_t opcode () ;
       std::ostream& output(std::ostream&) const override;
 	
     };
@@ -68,6 +70,7 @@ namespace FMTeach {
     class Load : public Instruction {
     public:
       Load (Register_ptr dest, Expr_ptr address);
+      static consteval instrtype_t opcode () ;
       auto& getDestination () const {return *assignee;}
       auto& getAddress () const {return *address;}
       std::ostream& output(std::ostream&) const override;
@@ -81,6 +84,7 @@ namespace FMTeach {
     class Store : public Instruction {
     public:
       Store (Expr_ptr toStore, Expr_ptr address);
+      static consteval instrtype_t opcode () ;
       auto& getStoree () const {return *storee;}
       auto& getAddress () const {return *address;}
       std::ostream& output(std::ostream&) const override;
@@ -89,6 +93,40 @@ namespace FMTeach {
       Expr_ptr storee;
       Expr_ptr address;
     
+    };
+
+    template<class T>
+    constexpr auto findInstrIndex () {
+      return auto_index<0,T,Assign,Skip,Load,Store,Assume> (); 
+    }
+
+    consteval instrtype_t Assign::opcode () {return findInstrIndex<Assign> ();}
+    consteval instrtype_t Assume::opcode () {return findInstrIndex<Assume> ();}
+    consteval instrtype_t Skip::opcode () {return findInstrIndex<Skip> ();}
+    consteval instrtype_t Store::opcode () {return findInstrIndex<Store> ();}
+
+    template<class T>
+    class InstructionVisitor {
+    public:
+      virtual T visitAssign (const Assign&) = 0;
+      virtual T visitAssume (const Assume&) = 0;
+      virtual T visitSkip (const Skip&) = 0;
+      virtual T visitStore (const Store&) = 0;
+    protected:
+      T visit (const Instruction& instr) {
+	switch (instr.instType ()) {
+	case Assign::opcode ():
+	  return visitAssign (static_cast<const Assign&> (instr));
+	case Assume::opcode ():
+	  return visitAssume (static_cast<const Assume&> (instr));
+	case Skip::opcode ():
+	  return visitSkip (static_cast<const Skip&> (instr));
+	case Store::opcode ():
+	  return visitStore (static_cast<const Store&> (instr));
+	default:
+	  throw std::runtime_error ("Error");
+	}
+      }
     };
     
   }

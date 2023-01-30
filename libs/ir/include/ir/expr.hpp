@@ -137,6 +137,10 @@ namespace FMTeach {
 	right->output (os);
 	return os << " ) ";
       }
+
+      auto& getLeft () const {return *left;}
+      auto& getRight () const {return *right;}
+      
       
     private:
       Expr_ptr left;
@@ -145,7 +149,7 @@ namespace FMTeach {
 
     
     using AddExpr = Binary<BinOp::Add>;
-    using SubExpr = Binary<BinOp::Add>;
+    using SubExpr = Binary<BinOp::Sub>;
     using DivExpr = Binary<BinOp::Div>;
     using MulExpr = Binary<BinOp::Mul>;
     using LEqExpr = Binary<BinOp::LEq>;
@@ -182,6 +186,8 @@ namespace FMTeach {
 	right -> output (os);
 	return os << " ) ";
       }
+
+      auto& getInner () const {return *right;}
       
     private:
       Expr_ptr right;
@@ -248,38 +254,38 @@ namespace FMTeach {
       virtual T visitDerefExpr (const DerefExpr& r) = 0;
       
       
-      T visit (Expr& e) {
+      T visit (const Expr& e) {
 	switch (e.exprType ()) {
 	case findExprIndex<Register> ():
-	  return visitRegister (static_cast<Register&> (e));
+	  return visitRegister (static_cast<const Register&> (e));
 	case findExprIndex<Constant> ():
-	  return visitConstant (static_cast<Constant&> (e));
+	  return visitConstant (static_cast<const Constant&> (e));
 	case findExprIndex<AddExpr> ():
-	  return visitAddExpr (static_cast<AddExpr&> (e));
+	  return visitAddExpr (static_cast<const AddExpr&> (e));
 	case findExprIndex<SubExpr> ():
-	  return visitSubExpr (static_cast<SubExpr&> (e));
+	  return visitSubExpr (static_cast<const SubExpr&> (e));
 	case findExprIndex<DivExpr> ():
-	  return visitDivExpr (static_cast<DivExpr&> (e));
+	  return visitDivExpr (static_cast<const DivExpr&> (e));
 	case findExprIndex<MulExpr> ():
-	  return visitMulExpr (static_cast<MulExpr&> (e));
+	  return visitMulExpr (static_cast<const MulExpr&> (e));
 	case findExprIndex<LEqExpr> ():
-	  return visitLEqExpr (static_cast<LEqExpr&> (e));
+	  return visitLEqExpr (static_cast<const LEqExpr&> (e));
 	case findExprIndex<GEqExpr> ():
-	  return visitGEqExpr (static_cast<GEqExpr&> (e));
+	  return visitGEqExpr (static_cast<const GEqExpr&> (e));
 	case findExprIndex<NEqExpr> ():
-	  return visitNEqExpr (static_cast<NEqExpr&> (e));
+	  return visitNEqExpr (static_cast<const NEqExpr&> (e));
 	case findExprIndex<EqExpr> ():
-	  return visitEqExpr (static_cast<EqExpr&> (e));
+	  return visitEqExpr (static_cast<const EqExpr&> (e));
 	case findExprIndex<LtExpr> ():
-	  return visitLtExpr (static_cast<LtExpr&> (e));
+	  return visitLtExpr (static_cast<const LtExpr&> (e));
 	case findExprIndex<GtExpr> ():
-	  return visitGtExpr (static_cast<GtExpr&> (e));
+	  return visitGtExpr (static_cast<const GtExpr&> (e));
 	case findExprIndex<NegationExpr> ():
-	  return visitGtExpr (static_cast<NegationExpr&> (e));
+	  return visitNegationExpr (static_cast<const NegationExpr&> (e));
 	case findExprIndex<MinusExpr> ():
-	  return visitGtExpr (static_cast<MinusExpr&> (e));
+	  return visitMinusExpr (static_cast<const MinusExpr&> (e));
 	case findExprIndex<DerefExpr> ():
-	  return visitGtExpr (static_cast<DerefExpr&> (e));
+	  return visitDerefExpr (static_cast<const DerefExpr&> (e));
 	    
 	default:
 	  throw std::runtime_error ("Don't know how to visit this");

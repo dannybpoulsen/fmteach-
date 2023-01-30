@@ -57,6 +57,8 @@ namespace FMTeach {
       auto getInitial ()const  {
 	return initial;
       }
+
+      auto& getRegisters () const {return registers;}
       
     private:
       std::vector<Location_ptr> locations;
