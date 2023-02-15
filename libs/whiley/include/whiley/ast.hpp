@@ -18,6 +18,7 @@ namespace FMTeach {
     class BinaryExpression;
     class DerefExpression;
     class AssignStatement;
+    class NonDetAssignStatement;
     class MemAssignStatement;
     class DeclareStatement;
     class IfStatement;
@@ -35,6 +36,7 @@ namespace FMTeach {
       virtual void visitDerefExpression (const DerefExpression& ) = 0;
       
       virtual void visitAssignStatement (const AssignStatement& ) = 0;
+      virtual void visitNonDetAssignStatement (const NonDetAssignStatement& ) = 0;
       virtual void visitMemAssignStatement (const MemAssignStatement& ) = 0;
       
       virtual void visitIfStatement (const IfStatement& ) = 0;
@@ -192,6 +194,18 @@ namespace FMTeach {
       std::string assignName;
     };
 
+     class NonDetAssignStatement  : public Statement{
+    public:
+       NonDetAssignStatement (std::string assignName, const location_t& loc) : Statement(loc),
+									       assignName(std::move(assignName)) {}
+      
+      void accept (NodeVisitor& v) const override {v.visitNonDetAssignStatement(*this);}
+      auto& getAssignName () const {return assignName;}
+      
+     private:
+      std::string assignName;
+    };
+    
     class MemAssignStatement  : public Statement{
     public:
       MemAssignStatement (Expression_ptr&& mem, Expression_ptr&& expr, const location_t& loc) : Statement(loc),

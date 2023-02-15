@@ -22,7 +22,9 @@ namespace FMTeach {
     template<class T>
     class Buffer {
     public:
-      Buffer (std::size_t elementer) : _internal(new T[elementer]),size(elementer) {}
+      Buffer (std::size_t elementer) : _internal(new T[elementer]),size(elementer) {
+	std::fill (_internal.get(),_internal.get()+size,0);
+      }
       Buffer (const Buffer& buf) : _internal(new T[buf.size]),size(buf.size) {
 	std::copy (buf._internal.get(),buf._internal.get()+buf.size,_internal.get());
       }

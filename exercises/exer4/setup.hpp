@@ -139,7 +139,7 @@ namespace FMTeach {
     
     class InitialisedExer : public FMTeach::Exercise  {
     public:
-      InitialisedExer () : Exercise ("Interpreter") {}
+      InitialisedExer () : Exercise ("Interpreter2") {}
       FMTeach::Result_ptr teacher_solution (const FMTeach::IR::CFA&) override;
       FMTeach::Result_ptr student_solution (const FMTeach::IR::CFA&) override;
       

@@ -87,6 +87,14 @@ namespace FMTeach {
       _internal->start->addEdge (std::make_shared<FMTeach::IR::Assign> (reg,_internal->expr),end);
       _internal->end = end;
     }
+
+    void Compiler::visitNonDetAssignStatement (const NonDetAssignStatement& ass) {
+      auto reg = _internal->vars.at (ass.getAssignName ());
+      auto end = _internal->cfa.makeLocation ("",false);
+      _internal->start->addEdge (std::make_shared<FMTeach::IR::Skip> (),end);
+      _internal->end = end;
+    }
+    
     void Compiler::visitIfStatement (const IfStatement& ifs ) {
       ifs.getCondition ().accept(*this);
       auto posExpr = _internal->expr;

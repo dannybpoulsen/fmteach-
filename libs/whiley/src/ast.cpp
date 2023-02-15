@@ -65,6 +65,10 @@ namespace FMTeach {
 	os << ";\n";
       }
 
+      void visitNonDetAssignStatement (const NonDetAssignStatement& ass) override {
+	os << ass.getAssignName () << " = NonDet";
+      }
+
       virtual void visitMemAssignStatement (const MemAssignStatement& assign) {
 	os << "*";
 	assign.getMemLoc ().accept (*this);
