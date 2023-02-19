@@ -1,0 +1,17 @@
+var x;
+var c;
+var z; 
+c = ?;
+
+if(c <= 20) {
+   x = 1;
+}
+else {
+     skip;
+}
+
+
+
+assert (x > 0);
+z = c / x;
+
