@@ -1,0 +1,20 @@
+var ptr;
+var x;
+
+ptr = ?;
+x = ?;
+
+
+assume (x < 127);
+assume (x >= 0);
+
+
+assume (ptr < 127);
+assume (ptr >= 0);
+
+
+#x = x;
+
+#ptr = x  - 1;
+
+assert ( x == $x$ );
