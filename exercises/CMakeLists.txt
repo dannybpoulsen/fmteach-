@@ -6,7 +6,6 @@ add_subdirectory (exer1)
 add_subdirectory (exer2)
 add_subdirectory (exer3)
 add_subdirectory (exer4)
-add_subdirectory (exer5)
 
 
 add_library (exercise SHARED exercices_plug.cpp)
