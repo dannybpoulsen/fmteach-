@@ -1,3 +1,10 @@
+FIND_PATH(GRAPHVIZ_INCLUDE_DIR NAMES "graphviz/cgraph.h")
+FIND_LIBRARY(GRAPHVIZ_LIBRARY NAMES cgraph)
+
+INCLUDE(FindPackageHandleStandardArgs)
+FIND_PACKAGE_HANDLE_STANDARD_ARGS(CGRAPH  REQUIRED_VARS GRAPHVIZ_LIBRARY GRAPHVIZ_INCLUDE_DIR)
+
+
 add_library (exer2 OBJECT exer.cpp solution.cpp graph.cpp)
-target_link_libraries (exer2 PUBLIC ir cgraph)
-target_include_directories (exer2 PRIVATE ${PROJECT_SOURCE_DIR})
+target_link_libraries (exer2 PUBLIC ir ${GRAPHVIZ_LIBRARY})
+target_include_directories (exer2 PRIVATE ${PROJECT_SOURCE_DIR} ${GRAPHVIZ_INCLUDE_DIR})
