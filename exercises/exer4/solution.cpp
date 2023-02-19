@@ -136,9 +136,10 @@ private:
     std::vector<ExecutionState> violations;
     
     std::vector<ExecutionState> waiting;
-    std::unordered_set<std::size_t> passed;
+    std::unordered_set<ExecutionState> passed;
     
     waiting.push_back (state);
+    passed.insert(state);
     while (waiting.size ()) {
       auto cur = waiting.back ();
       waiting.pop_back ();
@@ -147,12 +148,12 @@ private:
       for (auto& e  : cur.getLocation ()->edges ()) {
 	for (auto& succ : exec(e)) {
 	  
-	  if (!passed.count (succ.hash ())) {
+	  if (!passed.count (succ)) {
 	    if (succ.getLocation ()->isAssert ()) {
 	      violations.push_back (succ);
 	    }
 	    else {
-	      passed.insert(succ.hash ());  
+	      passed.insert(succ);  
 	      waiting.push_back (std::move(succ));
 	    }
 	  }

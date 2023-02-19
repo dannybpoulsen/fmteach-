@@ -70,6 +70,12 @@ namespace FMTeach {
 	ass.getExpression ().accept (*this);
 	os << ");\n";
       }
+
+      void visitAssumeStatement (const AssumeStatement& ass) override {
+	os << "Assume (";
+	ass.getExpression ().accept (*this);
+	os << ");\n";
+      }
       
       void visitNonDetAssignStatement (const NonDetAssignStatement& ass) override {
 	os << ass.getAssignName () << " = NonDet";

@@ -66,6 +66,8 @@
 %token    RBRACE
 %token    NONDET
 %token    ASSERT
+%token    ASSUME
+
 
 %token END 0 "end of file"
 %token <std::string>    IDENTIFIER
@@ -93,6 +95,7 @@ simpstmt : IDENTIFIER ASS expr SEMI { builder.AssignStmt ($1,@$);}
 | DEREF expr ASS expr SEMI {builder.MemAssignStmt (@$);}
 | IDENTIFIER ASS NONDET SEMI { builder.NonDetAssignStmt ($1,@$);}
 | ASSERT LPARAN expr RPARAN SEMI {builder.AssertStmt (@$);} 
+| ASSUME LPARAN expr RPARAN SEMI {builder.AssumeStmt (@$);} 
 
 expr : arith_expr | bool_expr
 

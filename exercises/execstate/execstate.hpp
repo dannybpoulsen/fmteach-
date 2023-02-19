@@ -57,6 +57,17 @@ public:
     std::for_each (_internal.get(),_internal.get()+size,[&combiner](const T& t) {combiner << t;});
     return combiner;
   }
+
+  bool operator== (const Buffer<T>& oth) const {
+    if (size != oth.size) return false;
+    auto it = _internal.get ();
+    auto oit = oth._internal.get();
+    for (; it != _internal.get () +size; ++it,++oit) {
+      if (*it != *oit)
+	return false;
+    }
+    return true;
+  }
   
 private:
   std::unique_ptr<T[]> _internal;
@@ -129,7 +140,12 @@ public:
     memory.output (os) << "\n";
     return os;
   }
-  
+
+  bool operator== (const ExecState<T>& oth) const {
+    return loc == oth.loc &&
+      registers == oth.registers &&
+      memory == oth.memory;
+  }
 private:
   Buffer<T> registers;
   Buffer<T> memory;

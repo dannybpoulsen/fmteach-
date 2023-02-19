@@ -54,6 +54,8 @@ loc->begin = loc->end;
 "}"  {return token::RBRACE;}
 "?"  {return token::NONDET;}
 "assert" {return token::ASSERT;}
+"assume" {return token::ASSUME;}
+
 
 <<EOF>> {return token::END;}
 [a-z]+       {yylval->emplace<std::string> (yytext); return token::IDENTIFIER; }

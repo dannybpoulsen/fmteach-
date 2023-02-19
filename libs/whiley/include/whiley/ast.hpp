@@ -26,6 +26,7 @@ namespace FMTeach {
     class SequenceStatement;
     class SkipStatement;
     class AssertStatement;
+    class AssumeStatement;
     
     
     class NodeVisitor {
@@ -38,6 +39,7 @@ namespace FMTeach {
 
       virtual void visitAssertStatement (const AssertStatement& ) = 0;
       virtual void visitAssignStatement (const AssignStatement& ) = 0;
+      virtual void visitAssumeStatement (const AssumeStatement& ) = 0;
       virtual void visitNonDetAssignStatement (const NonDetAssignStatement& ) = 0;
       virtual void visitMemAssignStatement (const MemAssignStatement& ) = 0;
       
@@ -201,6 +203,17 @@ namespace FMTeach {
       AssertStatement (Expression_ptr&& expr, const location_t& loc) : Statement(loc),expr(std::move(expr)) {}
       
       void accept (NodeVisitor& v) const override {v.visitAssertStatement(*this);}
+      auto& getExpression () const {return *expr;}
+      
+    private:
+      Expression_ptr expr;
+    };
+
+    class AssumeStatement : public Statement {
+    public:
+      AssumeStatement (Expression_ptr&& expr, const location_t& loc) : Statement(loc),expr(std::move(expr)) {}
+      
+      void accept (NodeVisitor& v) const override {v.visitAssumeStatement(*this);}
       auto& getExpression () const {return *expr;}
       
     private:
@@ -374,6 +387,14 @@ namespace FMTeach {
 	auto expr = exprStack.pop ();
 	  
 	stmtStack.insert (std::make_unique<AssertStatement> (std::move(expr),l));
+	
+      }
+
+      void AssumeStmt (const location_t& l) {
+
+	auto expr = exprStack.pop ();
+	  
+	stmtStack.insert (std::make_unique<AssumeStatement> (std::move(expr),l));
 	
       }
       

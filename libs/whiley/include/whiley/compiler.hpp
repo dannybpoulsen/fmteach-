@@ -15,6 +15,7 @@ namespace FMTeach {
       void visitBinaryExpression (const BinaryExpression& ) override ;  
       void visitAssignStatement (const AssignStatement& ) override ; 
       void visitAssertStatement (const AssertStatement& ) override ; 
+      void visitAssumeStatement (const AssumeStatement& ) override ; 
       void visitNonDetAssignStatement (const NonDetAssignStatement& ) override ; 
       
       void visitIfStatement (const IfStatement& ) override ; 

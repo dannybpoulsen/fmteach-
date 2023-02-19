@@ -103,6 +103,17 @@ namespace FMTeach {
       _internal->start->addEdge (std::make_shared<FMTeach::IR::Assume> (expr),nloc);
       _internal->end = nloc;
     }
+
+    void Compiler::visitAssumeStatement (const AssumeStatement& ass) {
+      
+      ass.getExpression ().accept(*this);
+      auto expr = _internal->expr;
+      
+      // continuation
+      auto nloc = _internal->cfa.makeLocation ("",false);
+      _internal->start->addEdge (std::make_shared<FMTeach::IR::Assume> (expr),nloc);
+      _internal->end = nloc;
+    }
     
     void Compiler::visitNonDetAssignStatement (const NonDetAssignStatement& ass) {
       auto reg = _internal->vars.at (ass.getAssignName ());
