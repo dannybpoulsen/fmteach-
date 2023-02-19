@@ -13,7 +13,6 @@ target_link_libraries (exercise PUBLIC ir exer1
 		      		       	  exer2
 					  exer3
 					  exer4
-					  exer5			  
 PRIVATE fmt)
 
 target_include_directories  (exercise PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}) 
