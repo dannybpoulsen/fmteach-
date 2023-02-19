@@ -15,66 +15,66 @@ namespace FMTeach {
   namespace Exer3 {
 
     using namespace FMTeach::IR;
-    struct Evaluator : private FMTeach::IR::ExprVisitor<std::int8_t> {
+    struct Evaluator : private FMTeach::IR::ExprVisitor<Value<std::int8_t>> {
       Evaluator (const ExecutionState& s) : state (s) {}
 
       auto operator() (const Expr& e) {
 	return visit(e);
       }
 
-      virtual std::int8_t visitRegister (const Register& r) {
+      virtual Value<std::int8_t> visitRegister (const Register& r) {
 	return state.getRegisters ()[r.getNumber ()];
       }
       
-      virtual std::int8_t visitConstant (const Constant& r) {
+      virtual Value<std::int8_t> visitConstant (const Constant& r) {
 	return r.getValue ();
       }
-      virtual std::int8_t visitAddExpr (const AddExpr& r) {
+      virtual Value<std::int8_t> visitAddExpr (const AddExpr& r) {
 	return visit(r.getLeft ()) + visit(r.getRight ());
       }
-      virtual std::int8_t visitSubExpr (const SubExpr& r) {
+      virtual Value<std::int8_t> visitSubExpr (const SubExpr& r) {
 	return visit(r.getLeft ()) - visit(r.getRight ());
       
       }
-      virtual std::int8_t visitDivExpr (const DivExpr& r) {
+      virtual Value<std::int8_t> visitDivExpr (const DivExpr& r) {
 	return visit(r.getLeft ()) / visit(r.getRight ());
 		
       }
-      virtual std::int8_t visitMulExpr (const MulExpr& r) {
+      virtual Value<std::int8_t> visitMulExpr (const MulExpr& r) {
 	return visit(r.getLeft ()) * visit(r.getRight ());
 		
       }
-      virtual std::int8_t visitLEqExpr (const LEqExpr& r) {
+      virtual Value<std::int8_t> visitLEqExpr (const LEqExpr& r) {
 	return visit(r.getLeft ()) <= visit(r.getRight ());
       
       }
-      virtual std::int8_t visitGEqExpr (const GEqExpr& r) {
+      virtual Value<std::int8_t> visitGEqExpr (const GEqExpr& r) {
 	return visit(r.getLeft ()) >= visit(r.getRight ());
       
       }
-      virtual std::int8_t visitNEqExpr (const NEqExpr& r) {
+      virtual Value<std::int8_t> visitNEqExpr (const NEqExpr& r) {
 	return visit(r.getLeft ()) != visit(r.getRight ());
       
       }
-      virtual std::int8_t visitEqExpr (const EqExpr& r) {
+      virtual Value<std::int8_t> visitEqExpr (const EqExpr& r) {
 	return visit(r.getLeft ()) == visit(r.getRight ());
       
       }
-      virtual std::int8_t visitLtExpr (const LtExpr& r) {
+      virtual Value<std::int8_t> visitLtExpr (const LtExpr& r) {
 	return visit(r.getLeft ()) < visit(r.getRight ());
       
       }
-      virtual std::int8_t visitGtExpr (const GtExpr& r) {
+      virtual Value<std::int8_t> visitGtExpr (const GtExpr& r) {
 	return visit(r.getLeft ()) > visit(r.getRight ());
       
       }
-      virtual std::int8_t visitNegationExpr (const NegationExpr& r) {
+      virtual Value<std::int8_t> visitNegationExpr (const NegationExpr& r) {
 	return !(visit (r.getInner ()));
       }
-      virtual std::int8_t visitMinusExpr (const MinusExpr& r) {
+      virtual Value<std::int8_t> visitMinusExpr (const MinusExpr& r) {
 	return -(visit (r.getInner ()));
       }
-      virtual std::int8_t visitDerefExpr (const DerefExpr& r) {
+      virtual Value<std::int8_t> visitDerefExpr (const DerefExpr& r) {
 	auto addres = visit(r.getInner ());
 	return state.getMemory ()[addres];
       }
@@ -117,6 +117,7 @@ namespace FMTeach {
       Executor (ExecutionState& state) : state(state),eval(state) {}
 
       bool operator() (const Instruction& instr) {
+	
 	return visit (instr);
       }
       
@@ -137,6 +138,15 @@ namespace FMTeach {
 	state.getMemory ().set (eval (st.getAddress ()),eval (st.getStoree ()));
 	return true;
       }
+      
+      bool visitNonDetAssign (const NonDetAssign& ass) {
+	std::cout << "Input Needed: ";
+	std::string str;
+	std::cin >> str;
+	state.getRegisters().set (ass.getDestination ().getNumber(),std::stoi (str));
+	return true;
+      }
+
 
     private:
       ExecutionState& state;

@@ -21,29 +21,33 @@ namespace FMTeach {
       Instruction_ptr instruction;
     };
     
-
+    
     class Location {
     public:
-      Location (std::string name) : name(std::move(name)) {}
+      Location (std::string name, bool asser = false) : name(std::move(name)),assert(asser) {}
       auto& getName () const {return name;}
       void addEdge (Instruction_ptr&& instr, Location_ptr to) {
 	_edges.emplace_back (std::move(instr),to);
       }
 
       auto& edges () const {return _edges;}
-      
-      
+      auto isAssert () const {return assert;}
+      std::size_t hash () const {return reinterpret_cast<std::size_t> (this);}
+      std::ostream& output ( std::ostream& os) {
+	return os << name  << ((assert ) ? ":-("  :   ":-)");
+      }
     private:
       std::string name;
       std::vector<Edge> _edges;
+      bool assert;
     };
 
     class CFA {
     public:
       CFA ()  {}
 
-      auto makeLocation (std::string name, bool isInitial) {
-	locations.emplace_back (std::make_shared<Location> (name));
+      auto makeLocation (std::string name, bool isInitial, bool assert = false) {
+	locations.emplace_back (std::make_shared<Location> (name,assert));
 	if (isInitial)
 	  initial = locations.back ();
 	return locations.back ();

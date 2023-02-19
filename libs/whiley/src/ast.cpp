@@ -65,6 +65,12 @@ namespace FMTeach {
 	os << ";\n";
       }
 
+      void visitAssertStatement (const AssertStatement& ass) override {
+	os << "Assert (";
+	ass.getExpression ().accept (*this);
+	os << ");\n";
+      }
+      
       void visitNonDetAssignStatement (const NonDetAssignStatement& ass) override {
 	os << ass.getAssignName () << " = NonDet";
       }

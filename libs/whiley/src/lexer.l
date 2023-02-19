@@ -52,12 +52,14 @@ loc->begin = loc->end;
 ")"  {return token::RPARAN;}
 "{"  {return token::LBRACE;}
 "}"  {return token::RBRACE;}
-
+"?"  {return token::NONDET;}
+"assert" {return token::ASSERT;}
 
 <<EOF>> {return token::END;}
 [a-z]+       {yylval->emplace<std::string> (yytext); return token::IDENTIFIER; }
 [0-9]+  {yylval->emplace<std::int8_t> (std::stoi(yytext)); return token::NUMBER; }
 -[1-9][0-9]*  {yylval->emplace<std::int8_t> (std::stoi(yytext)); return token::NUMBER; }
+\'[a-zA-Z0-9]\' {yylval->emplace<std::int8_t> (yytext[1]); return token::NUMBER;}
 
 [\n] {loc->newline (); }
 [\t ' '] {loc->movecol(strlen(yytext));}

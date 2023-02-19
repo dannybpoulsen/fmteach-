@@ -9,9 +9,10 @@ namespace FMTeach {
 
     FMTeach::Result_ptr FMTeach::Exer4::InitialisedExer::student_solution (const FMTeach::IR::CFA& cfa)  {
       throw NotSolvedYet (__FILE__);
+      std::vector<ExecutionState> violations;
       std::unordered_set<const FMTeach::IR::Register*> found_uninitialised;
-      ExecutionState state{cfa.getRegisters ().size (), cfa.getInitial () };
-      return std::make_unique<FMTeach::Exer4::ResultExer> ();
+      ExecutionState state{cfa.getRegisters ().size (), 127, cfa.getInitial () };
+      return std::make_unique<FMTeach::Exer4::ResultExer> (std::move(violations));
     }
   }
 

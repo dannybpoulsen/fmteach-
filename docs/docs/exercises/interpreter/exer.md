@@ -24,14 +24,12 @@ namespace {
 }
 ```
 
-1. The initial state of a Whiley program. You probably want to look at the file `exercises/exer3/setup.hpp` for how the state is represented 
+1. The initial state of a Whiley program. You probably want to look at the file `exercises/exer3/setup.hpp` and `exercises/execstate/execstate.hpp"` for how the state is represented 
 2. Replace this line with your solution
 
 
 ## Visitors 
 To help you implement your interpreter both IR expressions and IR Instruction have a visitor pattern implemented. Look inside `libs/ir/include/instructions.hpp` and  `libs/ir/include/expr.hpp` to see their definitions.
-
-## Solution Sketch
 
 
 

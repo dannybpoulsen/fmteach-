@@ -25,6 +25,7 @@ namespace FMTeach {
     class WhileStatement;
     class SequenceStatement;
     class SkipStatement;
+    class AssertStatement;
     
     
     class NodeVisitor {
@@ -34,7 +35,8 @@ namespace FMTeach {
       virtual void visitNumberExpression (const NumberExpression& ) = 0;
       virtual void visitBinaryExpression (const BinaryExpression& ) = 0;
       virtual void visitDerefExpression (const DerefExpression& ) = 0;
-      
+
+      virtual void visitAssertStatement (const AssertStatement& ) = 0;
       virtual void visitAssignStatement (const AssignStatement& ) = 0;
       virtual void visitNonDetAssignStatement (const NonDetAssignStatement& ) = 0;
       virtual void visitMemAssignStatement (const MemAssignStatement& ) = 0;
@@ -170,7 +172,7 @@ namespace FMTeach {
       Statement (const location_t& loc) : Node(loc) {}
       virtual ~Statement () {}
     };
-
+    
     using Statement_ptr = std::unique_ptr<Statement>;
 
     class SkipStatement  : public Statement{
@@ -194,7 +196,18 @@ namespace FMTeach {
       std::string assignName;
     };
 
-     class NonDetAssignStatement  : public Statement{
+    class AssertStatement : public Statement {
+    public:
+      AssertStatement (Expression_ptr&& expr, const location_t& loc) : Statement(loc),expr(std::move(expr)) {}
+      
+      void accept (NodeVisitor& v) const override {v.visitAssertStatement(*this);}
+      auto& getExpression () const {return *expr;}
+      
+    private:
+      Expression_ptr expr;
+    };
+    
+    class NonDetAssignStatement  : public Statement{
     public:
        NonDetAssignStatement (std::string assignName, const location_t& loc) : Statement(loc),
 									       assignName(std::move(assignName)) {}
@@ -355,6 +368,24 @@ namespace FMTeach {
 
 	}
       }
+
+      void AssertStmt (const location_t& l) {
+
+	auto expr = exprStack.pop ();
+	  
+	stmtStack.insert (std::make_unique<AssertStatement> (std::move(expr),l));
+	
+      }
+      
+      void NonDetAssignStmt (std::string name, const location_t& l) {
+	if (vars.count (name)) {
+	  stmtStack.insert (std::make_unique<NonDetAssignStatement> (name,l));
+	}
+	else {
+	  throw std::runtime_error ("Variable does not exist");
+
+	}
+      }
       
       void DeclareStmt (std::string name, const location_t& l) {
 	if (!vars.count (name)) {
@@ -369,7 +400,6 @@ namespace FMTeach {
 	auto expr = exprStack.pop ();
 	auto elseb = stmtStack.pop ();
 	auto ifb = stmtStack.pop ();
-	
 	stmtStack.insert (std::make_unique<IfStatement> (std::move(expr),
 							 std::move(ifb),
 							 std::move(elseb),

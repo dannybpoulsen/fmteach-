@@ -11,6 +11,13 @@ namespace FMTeach {
 							assignee(dest),
 							expr(expr) {}
 
+
+    NonDetAssign::NonDetAssign (Register_ptr dest) : Instruction (findInstrIndex<NonDetAssign> ()),
+							assignee(dest) {}
+    
+    std::ostream& NonDetAssign::output (std::ostream& os) const  {
+      return os << *assignee <<" := NonDet";
+    }
     
     Assume::Assume (Expr_ptr expr) : Instruction (findInstrIndex<Assume> ()),
 				     expr(expr) {}
@@ -19,7 +26,7 @@ namespace FMTeach {
     std::ostream& Assume::output (std::ostream& os) const  {
       return os << "Assume (" <<* expr <<") ";
     }
-
+    
     
     
     std::ostream& Assign::output (std::ostream& os) const  {

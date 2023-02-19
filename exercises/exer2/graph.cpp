@@ -12,6 +12,8 @@ namespace FMTeach {
       Internal () {
 	graph = agopen(const_cast<char*> ("G"), Agdirected, NULL);
 	agattr(graph,AGEDGE,const_cast<char*>("label"),const_cast<char*> (""));
+	agattr(graph,AGNODE,const_cast<char*>("fillcolor"),const_cast<char*> (""));
+	agattr(graph,AGNODE,const_cast<char*>("style"),const_cast<char*> ("filled"));
       }
       ~Internal () {agclose (graph);}
       Agraph_t* graph;
@@ -25,7 +27,12 @@ namespace FMTeach {
       static std::size_t i = 0;
       auto lookupOrCreate = [this](auto& loc) {
 	if (!_internal->nodes.count (loc)) {
-	  _internal->nodes.emplace(loc,agnode (_internal->graph,nullptr,true));
+	  auto node = agnode (_internal->graph,nullptr,true);
+	  if (loc->isAssert ()) {
+	    agset (node,const_cast<char*> ("fillcolor"),const_cast<char*>("red"));
+    
+	  }
+	  _internal->nodes.emplace(loc,node);
 	}
 	return _internal->nodes.at (loc);
       };

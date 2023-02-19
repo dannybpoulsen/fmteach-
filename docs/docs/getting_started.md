@@ -1,6 +1,6 @@
 # Getting Started
 ## Building
-Before getting started you need to compile FMTeach++. 
+Before getting started you need to compile FMTeach++. You need to recompile whenever you have solved an exercise
 
 ```bash
 mkdir build

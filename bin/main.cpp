@@ -72,5 +72,9 @@ int main (int argc, char** argv) {
     }catch (FMTeach::NotSolvedYet& e) {
       std::cerr << e.what () << std::endl;
     }
+    
+    catch (std::runtime_error& e) {
+      std::cerr << e.what () << std::endl;
+    }
   }
 }

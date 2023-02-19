@@ -40,3 +40,5 @@ nav:
 - Exercises:
   - Exercise 1: exercises/cfa/descr.md
   - Exercise 2: exercises/cfavis/descr.md
+  - Exercise 3: exercises/interpreter/exer.md
+  - Exercise 4: exercises/mc/exer.md

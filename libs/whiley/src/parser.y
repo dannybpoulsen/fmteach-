@@ -64,6 +64,8 @@
 %token    RPARAN
 %token    LBRACE
 %token    RBRACE
+%token    NONDET
+%token    ASSERT
 
 %token END 0 "end of file"
 %token <std::string>    IDENTIFIER
@@ -89,6 +91,8 @@ iterativestmt : WHILE LPARAN expr RPARAN LBRACE stmtlist RBRACE {builder.WhileSt
 simpstmt : IDENTIFIER ASS expr SEMI { builder.AssignStmt ($1,@$);}
 | SKIP SEMI {builder.SkipStmt (@$);}
 | DEREF expr ASS expr SEMI {builder.MemAssignStmt (@$);}
+| IDENTIFIER ASS NONDET SEMI { builder.NonDetAssignStmt ($1,@$);}
+| ASSERT LPARAN expr RPARAN SEMI {builder.AssertStmt (@$);} 
 
 expr : arith_expr | bool_expr
 

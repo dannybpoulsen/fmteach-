@@ -45,6 +45,18 @@ namespace FMTeach {
       Register_ptr assignee;
       Expr_ptr expr;
     };
+
+    class NonDetAssign : public Instruction {
+    public:
+      NonDetAssign (Register_ptr dest);
+      static consteval instrtype_t opcode () ;
+      auto& getDestination () const {return *assignee;}
+      std::ostream& output(std::ostream&) const override;
+      
+    private:
+      Register_ptr assignee;
+    };
+    
     
     class Assume : public Instruction {
     public:
@@ -97,14 +109,16 @@ namespace FMTeach {
 
     template<class T>
     constexpr auto findInstrIndex () {
-      return auto_index<0,T,Assign,Skip,Load,Store,Assume> (); 
+      return auto_index<0,T,Assign,Skip,Load,Store,Assume,NonDetAssign> (); 
     }
 
     consteval instrtype_t Assign::opcode () {return findInstrIndex<Assign> ();}
     consteval instrtype_t Assume::opcode () {return findInstrIndex<Assume> ();}
     consteval instrtype_t Skip::opcode () {return findInstrIndex<Skip> ();}
     consteval instrtype_t Store::opcode () {return findInstrIndex<Store> ();}
-
+    consteval instrtype_t NonDetAssign::opcode () {return findInstrIndex<NonDetAssign> ();}
+    
+    
     template<class T>
     class InstructionVisitor {
     public:
@@ -112,6 +126,8 @@ namespace FMTeach {
       virtual T visitAssume (const Assume&) = 0;
       virtual T visitSkip (const Skip&) = 0;
       virtual T visitStore (const Store&) = 0;
+      virtual T visitNonDetAssign (const NonDetAssign&) = 0;
+      
     protected:
       T visit (const Instruction& instr) {
 	switch (instr.instType ()) {
@@ -123,6 +139,9 @@ namespace FMTeach {
 	  return visitSkip (static_cast<const Skip&> (instr));
 	case Store::opcode ():
 	  return visitStore (static_cast<const Store&> (instr));
+	case NonDetAssign::opcode ():
+	  return visitNonDetAssign (static_cast<const NonDetAssign&> (instr));
+	
 	default:
 	  throw std::runtime_error ("Error");
 	}

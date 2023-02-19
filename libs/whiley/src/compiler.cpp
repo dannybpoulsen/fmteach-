@@ -55,8 +55,10 @@ namespace FMTeach {
 	break;
       case BinOps::Mul:
 	_internal->expr = std::make_shared<FMTeach::IR::MulExpr> (std::move(le),std::move(right));
+	break;
       case BinOps::Div:
 	_internal->expr = std::make_shared<FMTeach::IR::DivExpr> (std::move(le),std::move(right));
+	break;
       case BinOps::LEq:
 	_internal->expr = std::make_shared<FMTeach::IR::LEqExpr> (std::move(le),std::move(right));
 	break;
@@ -88,10 +90,24 @@ namespace FMTeach {
       _internal->end = end;
     }
 
+    void Compiler::visitAssertStatement (const AssertStatement& ass) {
+      
+      ass.getExpression ().accept(*this);
+      auto expr = _internal->expr;
+      auto nexpr = std::make_shared<FMTeach::IR::NegationExpr> (expr);
+      auto assert_violated = _internal->cfa.makeLocation ("AssertViolation",false,true);
+      _internal->start->addEdge (std::make_shared<FMTeach::IR::Assume> (nexpr),assert_violated);
+      
+      // continuation
+      auto nloc = _internal->cfa.makeLocation ("",false);
+      _internal->start->addEdge (std::make_shared<FMTeach::IR::Assume> (expr),nloc);
+      _internal->end = nloc;
+    }
+    
     void Compiler::visitNonDetAssignStatement (const NonDetAssignStatement& ass) {
       auto reg = _internal->vars.at (ass.getAssignName ());
       auto end = _internal->cfa.makeLocation ("",false);
-      _internal->start->addEdge (std::make_shared<FMTeach::IR::Skip> (),end);
+      _internal->start->addEdge (std::make_shared<FMTeach::IR::NonDetAssign> (reg),end);
       _internal->end = end;
     }
     
