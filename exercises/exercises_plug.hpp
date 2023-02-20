@@ -15,7 +15,7 @@ namespace FMTeach {
 
   class NotSolvedYet : public std::runtime_error {
   public:
-    NotSolvedYet (const std::string& s) : std::runtime_error (fmt::format ("Exercise not solver. Go to  {} for adding your solution",s)) {}
+    NotSolvedYet (const std::string& s) : std::runtime_error (fmt::format ("Exercise not solved. Go to  {} for adding your solution",s)) {}
 
 
     
