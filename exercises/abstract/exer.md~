@@ -1,0 +1,5 @@
+## Exercise 5 
+In this exercise the end goal is to implement an Explicit State Reachability algorithm for Whiley.   
+Your implementation should be added to `exercises/exer5.cpp`, and you can probably use big parts of your solution to exercises 3 and 4. 
+
+
