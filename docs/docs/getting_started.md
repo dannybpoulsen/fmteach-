@@ -33,3 +33,13 @@ fmteach --i program.whiley --e exercisename
 fmteach --s --i program.whiley --e exercisename
 ```
 
+
+## Docker Image
+You can build/run in a docker image. For this you can run the command (in the root of the repository)
+
+```bash 
+docker run --workdir /fmteach -it -v$(pwd):/fmteach --rm palanthal/fmteach_build  /bin/bash
+```
+
+You can edit the source files on you machine and just drop in to docker when you need /compile fmteach.
+
