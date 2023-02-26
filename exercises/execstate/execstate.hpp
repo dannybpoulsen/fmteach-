@@ -68,6 +68,15 @@ public:
     }
     return true;
   }
+
+  auto begin () const {
+    return _internal.get();
+  }
+
+  auto end () const {
+    return _internal.get()+size;
+  }
+  
   
 private:
   std::unique_ptr<T[]> _internal;
@@ -124,7 +133,9 @@ public:
   auto &getRegisters() const { return registers; }
   auto &getMemory() const { return memory; }
 
-  auto &getLocation() { return loc; }
+  auto &getLocation()  { return loc; }
+  auto getLocation() const  { return loc; }
+  
   void setLocation(FMTeach::IR::Location_ptr l) { loc = l; }
 
   std::size_t hash () const {
