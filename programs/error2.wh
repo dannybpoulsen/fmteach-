@@ -1,11 +1,11 @@
 var x;
 
-
+x = 0;
 if (x == 0) {
      skip;
    }
 
 else {
-    assert (0);
+    assert (x);
      
 }

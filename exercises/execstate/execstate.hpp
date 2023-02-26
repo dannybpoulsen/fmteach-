@@ -29,7 +29,7 @@ public:
               _internal.get());
   }
   Buffer(Buffer &&) = default;
-
+  
   auto operator[](std::size_t e) const {
     if (e >= size) {
       throw OutOfRange{};
@@ -69,6 +69,7 @@ public:
     return true;
   }
 
+  Buffer<T>& operator= (Buffer<T>&&) = default;
   auto begin () const {
     return _internal.get();
   }
@@ -125,8 +126,8 @@ public:
                  FMTeach::IR::Location_ptr loc)
       : registers(regs), memory(memsize), loc(loc) {}
   ExecState(const ExecState &s) = default;
-  ExecState(ExecState &&) = default;
-
+  ExecState(ExecState&&) = default;
+  
   auto &getRegisters() { return registers; }
   auto &getMemory() { return memory; }
 
@@ -157,6 +158,8 @@ public:
       registers == oth.registers &&
       memory == oth.memory;
   }
+
+  ExecState& operator= (ExecState<T>&& ) = default;
 private:
   Buffer<T> registers;
   Buffer<T> memory;

@@ -89,9 +89,9 @@ using namespace FMTeach::IR;
 
     virtual Lattice visitLEqExpr(const LEqExpr &r) {
       static Lattice::AbsValue operations [4][4] = {
-	{Lattice::AbsValue::Top,    Lattice::AbsValue::Top,       Lattice::AbsValue::Zero,Lattice::AbsValue::Top},
-	{Lattice::AbsValue::Zero,    Lattice::AbsValue::Top,      Lattice::AbsValue::Top,Lattice::AbsValue::Top},
-	{Lattice::AbsValue::Top,     Lattice::AbsValue::Top,      Lattice::AbsValue::Top,Lattice::AbsValue::Top},
+	{Lattice::AbsValue::Pos,     Lattice::AbsValue::Pos,      Lattice::AbsValue::Zero,Lattice::AbsValue::Top},
+	{Lattice::AbsValue::Zero,    Lattice::AbsValue::Top,      Lattice::AbsValue::Zero,Lattice::AbsValue::Top},
+	{Lattice::AbsValue::Pos,     Lattice::AbsValue::Pos,      Lattice::AbsValue::Top,Lattice::AbsValue::Top},
 	{Lattice::AbsValue::Top,     Lattice::AbsValue::Top,      Lattice::AbsValue::Top, Lattice::AbsValue::Top}
       };
       auto left = visit (r.getLeft ());
@@ -102,8 +102,8 @@ using namespace FMTeach::IR;
     
     virtual Lattice visitGEqExpr(const GEqExpr &r) {
       static Lattice::AbsValue operations [4][4] = {
-	{Lattice::AbsValue::Top,    Lattice::AbsValue::Zero,      Lattice::AbsValue::Top,Lattice::AbsValue::Top},
-	{Lattice::AbsValue::Top,    Lattice::AbsValue::Top,      Lattice::AbsValue::Top,Lattice::AbsValue::Top},
+	{Lattice::AbsValue::Pos,    Lattice::AbsValue::Zero,      Lattice::AbsValue::Pos,Lattice::AbsValue::Top},
+	{Lattice::AbsValue::Pos,    Lattice::AbsValue::Top,      Lattice::AbsValue::Pos,Lattice::AbsValue::Top},
 	{Lattice::AbsValue::Zero,   Lattice::AbsValue::Zero,     Lattice::AbsValue::Top,Lattice::AbsValue::Top},
 	{Lattice::AbsValue::Top,    Lattice::AbsValue::Top,      Lattice::AbsValue::Top, Lattice::AbsValue::Top}
       };
@@ -115,9 +115,9 @@ using namespace FMTeach::IR;
 
     virtual Lattice visitNEqExpr(const NEqExpr &r) {
       static Lattice::AbsValue operations [4][4] = {
-	{Lattice::AbsValue::Zero,  Lattice::AbsValue::Top,      Lattice::AbsValue::Top,Lattice::AbsValue::Top},
-	{Lattice::AbsValue::Top,   Lattice::AbsValue::Top,      Lattice::AbsValue::Top,Lattice::AbsValue::Top},
-	{Lattice::AbsValue::Top,   Lattice::AbsValue::Top,      Lattice::AbsValue::Top,Lattice::AbsValue::Top},
+	{Lattice::AbsValue::Zero,  Lattice::AbsValue::Pos,      Lattice::AbsValue::Pos,Lattice::AbsValue::Top},
+	{Lattice::AbsValue::Pos,   Lattice::AbsValue::Top,      Lattice::AbsValue::Pos,Lattice::AbsValue::Top},
+	{Lattice::AbsValue::Pos,   Lattice::AbsValue::Pos,      Lattice::AbsValue::Top,Lattice::AbsValue::Top},
 	{Lattice::AbsValue::Top,   Lattice::AbsValue::Top,      Lattice::AbsValue::Top, Lattice::AbsValue::Top}
       };
       auto left = visit (r.getLeft ());
@@ -128,7 +128,7 @@ using namespace FMTeach::IR;
 
     virtual Lattice visitEqExpr(const EqExpr &r) {
       static Lattice::AbsValue operations [4][4] = {
-	{Lattice::AbsValue::Top,  Lattice::AbsValue::Zero,      Lattice::AbsValue::Zero,Lattice::AbsValue::Top},
+	{Lattice::AbsValue::Pos,  Lattice::AbsValue::Zero,      Lattice::AbsValue::Zero,Lattice::AbsValue::Top},
 	{Lattice::AbsValue::Zero, Lattice::AbsValue::Top,      Lattice::AbsValue::Zero, Lattice::AbsValue::Top},
 	{Lattice::AbsValue::Zero, Lattice::AbsValue::Zero,      Lattice::AbsValue::Top,  Lattice::AbsValue::Top},
 	{Lattice::AbsValue::Top,  Lattice::AbsValue::Top,      Lattice::AbsValue::Top,  Lattice::AbsValue::Top}
@@ -141,9 +141,9 @@ using namespace FMTeach::IR;
 
     virtual Lattice visitLtExpr(const LtExpr &r) {
       static Lattice::AbsValue operations [4][4] = {
+	{Lattice::AbsValue::Zero, Lattice::AbsValue::Pos,    Lattice::AbsValue::Zero, Lattice::AbsValue::Top},
 	{Lattice::AbsValue::Zero, Lattice::AbsValue::Top,    Lattice::AbsValue::Zero, Lattice::AbsValue::Top},
-	{Lattice::AbsValue::Zero, Lattice::AbsValue::Top,    Lattice::AbsValue::Zero, Lattice::AbsValue::Top},
-	{Lattice::AbsValue::Top, Lattice::AbsValue::Top,     Lattice::AbsValue::Top,  Lattice::AbsValue::Top},
+	{Lattice::AbsValue::Pos,  Lattice::AbsValue::Pos,    Lattice::AbsValue::Top,  Lattice::AbsValue::Top},
 	{Lattice::AbsValue::Top,  Lattice::AbsValue::Top,    Lattice::AbsValue::Top,  Lattice::AbsValue::Top}
       };
       auto left = visit (r.getLeft ());
@@ -154,8 +154,8 @@ using namespace FMTeach::IR;
 
     virtual Lattice visitGtExpr(const GtExpr &r) {
       static Lattice::AbsValue operations [4][4] = {
-	{Lattice::AbsValue::Zero, Lattice::AbsValue::Zero,    Lattice::AbsValue::Top, Lattice::AbsValue::Top},
-	{Lattice::AbsValue::Top, Lattice::AbsValue::Top,    Lattice::AbsValue::Top, Lattice::AbsValue::Top},
+	{Lattice::AbsValue::Zero, Lattice::AbsValue::Zero,    Lattice::AbsValue::Pos, Lattice::AbsValue::Top},
+	{Lattice::AbsValue::Pos, Lattice::AbsValue::Top,    Lattice::AbsValue::Pos, Lattice::AbsValue::Top},
 	{Lattice::AbsValue::Zero, Lattice::AbsValue::Zero,     Lattice::AbsValue::Top,  Lattice::AbsValue::Top},
 	{Lattice::AbsValue::Top,  Lattice::AbsValue::Top,    Lattice::AbsValue::Top,  Lattice::AbsValue::Top}
       };
@@ -167,7 +167,7 @@ using namespace FMTeach::IR;
 
     virtual Lattice visitNegationExpr(const NegationExpr &r) {
       static Lattice::AbsValue operations [4] = {
-	Lattice::AbsValue::Top, Lattice::AbsValue::Zero,    Lattice::AbsValue::Zero, Lattice::AbsValue::Top
+	Lattice::AbsValue::Pos, Lattice::AbsValue::Zero,    Lattice::AbsValue::Zero, Lattice::AbsValue::Top
       };
       return {operations[static_cast<int> (visit (r.getInner ()).getValue  ())]};
     }
@@ -262,6 +262,23 @@ using namespace FMTeach::IR;
       check (l.getMemory (),r.getMemory ());
       
   }
+
+  auto mergeInto (const ExecutionState& l,const ExecutionState& r) {
+    assert (l.getLocation () == r.getLocation ());
+    ExecutionState n{r};
+    auto merge = [](auto& vecl,auto& vec2l) {
+      auto lit = vecl.begin();
+      auto rit = vec2l.begin();
+      
+      for (; lit != vecl.end(); ++lit, ++rit) {
+	*rit = Lattice::join (*lit,*rit); 
+      }
+    };
+    
+    merge (l.getRegisters(), n.getRegisters ());
+    merge (l.getMemory (),   n.getMemory ());
+    return n;
+  }
   
   FMTeach::Result_ptr
   FMTeach::Exer5::AInterExer::teacher_solution(const FMTeach::IR::CFA &cfa) {
@@ -280,11 +297,27 @@ using namespace FMTeach::IR;
       }
       return false;
     };
+
+    auto merge = [] (auto&state,auto& vec) {
+      auto it = vec.begin ();
+      auto end = vec.end ();
+      for (; it != end; ++it) {
+	if (it->getLocation () == state.getLocation ()) {
+	  auto res = mergeInto (state,*it);
+	  it = vec.erase (it);
+	  std::inserter(vec,it) = std::move(res);
+	  return ;
+	}
+      }
+
+      std::inserter (vec,vec.end ()) = state;
+      
+    };
+    
     
     waiting.push_back (state);
     while (waiting.size ()) {
       auto cur = waiting.back ();
-      cur.output (std::cerr) << std ::endl;; 
       
       waiting.pop_back ();
       Executor exec{cur};
@@ -297,8 +330,8 @@ using namespace FMTeach::IR;
 	      violations.push_back (succ);
 	    }
 	    else {
-	      passed.insert(succ);  
-	      waiting.push_back (std::move(succ));
+	      merge (succ,passed);
+	      merge (succ,waiting);
 	    }
 	  }
 

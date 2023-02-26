@@ -32,7 +32,6 @@ namespace FMTeach {
       Lattice (AbsValue v) : val(v) {}
       Lattice () : val(AbsValue::Zero) {}
       
-      
       auto getValue () const {return val;}
       std::size_t hash () const {return static_cast<std::size_t> (val);}
       
@@ -51,6 +50,7 @@ namespace FMTeach {
 	}
       }
 
+      
       bool isZero () const {
 	return val == AbsValue::Zero;
       }
